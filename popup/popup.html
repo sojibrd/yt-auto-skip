@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>YouTube Auto Skip Ad</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <h1>YouTube Auto Skip Ad</h1>
+
+  <label class="row toggle">
+    <span id="status-text">Auto Skip: On</span>
+    <input type="checkbox" id="enabled" checked>
+    <span class="switch" aria-hidden="true"></span>
+  </label>
+
+  <div class="row">
+    <span>Ads skipped: <strong id="count">0</strong></span>
+    <button type="button" id="reset">Reset</button>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
