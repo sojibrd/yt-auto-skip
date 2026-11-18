@@ -32,6 +32,8 @@
   const TARGET_ATTR = 'data-yt-auto-skip-target';
 
   let enabled = true;
+  // When false, never use the debugger API: skip by moving the ad to its end.
+  let useRealClick = true;
   let observer = null;
   let observedPlayer = null;
   let checkQueued = false;
@@ -97,7 +99,7 @@
     const sameAdOnScreen = () =>
       isVisible(button) && player.classList.contains(AD_SHOWING_CLASS) && video?.currentSrc === src;
 
-    if (await trustedClick(button)) {
+    if (useRealClick && (await trustedClick(button))) {
       await sleep(VERIFY_MS);
       if (!sameAdOnScreen()) {
         if (countable) incrementCounter();
@@ -180,16 +182,22 @@
 
   async function init() {
     try {
-      const { enabled: stored = true } = await chrome.storage.local.get('enabled');
+      const { enabled: stored = true, useRealClick: storedRealClick = true } =
+        await chrome.storage.local.get(['enabled', 'useRealClick']);
       enabled = stored;
+      useRealClick = storedRealClick;
     } catch (err) {
       console.warn('[YT Auto Skip] Could not read settings:', err);
     }
 
     chrome.storage.onChanged.addListener((changes, area) => {
-      if (area === 'local' && 'enabled' in changes) {
+      if (area !== 'local') return;
+      if ('enabled' in changes) {
         enabled = changes.enabled.newValue !== false;
         if (enabled) queueCheck();
+      }
+      if ('useRealClick' in changes) {
+        useRealClick = changes.useRealClick.newValue !== false;
       }
     });
 
