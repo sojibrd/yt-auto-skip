@@ -15,7 +15,7 @@ A Chrome extension that skips skippable YouTube video ads as soon as YouTube sho
 1. A content script watches the YouTube player for an ad (the player gets the `ad-showing` class).
 2. When the ad's **Skip** button becomes visible, the extension clicks it.
 3. YouTube ignores clicks made by page scripts, so the click is sent as a real mouse click through Chrome's debugger API (`chrome.debugger` → `Input.dispatchMouseEvent`).
-4. If that click is not possible or YouTube doesn't react within a second, the extension moves the ad video to just before its end instead.
+4. If that click is not possible, YouTube doesn't react within a second, or **Real click** is switched off in the popup, the extension moves the ad video to just before its end instead.
 
 The extension only acts once YouTube itself offers the **Skip** button, so it never touches ads that can't be skipped.
 
@@ -47,12 +47,13 @@ Or open the repository on GitHub, click **Code → Download ZIP**, and unzip it.
 2. When a skippable ad plays, wait for the **Skip** button to appear. The extension skips the ad for you.
 3. Click the extension icon to open the popup:
    - **Auto Skip: On / Off** turns skipping on or off. The change applies right away in every open YouTube tab.
+   - **Real click: On / Off** chooses how an ad is skipped. On (the default) sends a real mouse click through the debugger API. Off never uses the debugger, so Chrome shows no "debugging" bar; the ad is moved to just before its end instead.
    - **Ads skipped** shows how many ads were skipped.
    - **Reset** sets the counter back to 0.
 
 ### The "started debugging this browser" bar
 
-Each time an ad is skipped, Chrome briefly shows a bar at the top saying **"YouTube Auto Skip Ad" started debugging this browser**. This is expected. Chrome shows that bar whenever an extension uses the debugger API, which is what makes the click count as a real click. The bar goes away as soon as the click is done.
+Each time an ad is skipped, Chrome briefly shows a bar at the top saying **"YouTube Auto Skip Ad" started debugging this browser**. This is expected. Chrome shows that bar whenever an extension uses the debugger API, which is what makes the click count as a real click. The bar goes away as soon as the click is done. If you don't want the bar, turn **Real click** off in the popup; ads are then skipped without the debugger.
 
 ## Updating
 
@@ -70,7 +71,7 @@ Each time an ad is skipped, Chrome briefly shows a bar at the top saying **"YouT
 
 ## Privacy
 
-The extension sends no data anywhere. It stores only two values in Chrome's local extension storage: whether skipping is on (`enabled`) and the number of skipped ads (`skipCount`).
+The extension sends no data anywhere. It stores only three values in Chrome's local extension storage: whether skipping is on (`enabled`), whether to use the real click (`useRealClick`), and the number of skipped ads (`skipCount`).
 
 ## Limitations
 
